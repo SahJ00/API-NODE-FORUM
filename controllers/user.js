@@ -2,6 +2,8 @@
 
 var validator = require('validator');
 var bcrypt = require('bcrypt-nodejs');
+var fs = require('fs');
+var path = require('path');
 var User = require('../models/user');
 var jwt = require('../services/jwt');
 
@@ -211,6 +213,84 @@ var controller = {
                 });
             });
         }
+    },
+    uploadAvatar: function (req, res) {
+        // Configurar el módulo multiparty (middleware) -> routes/user.js
+
+        // Recoger fichero de la petición
+        var file_name = 'Avatar no subido...';
+
+        if (!req.files) {
+            return res.status(404).send({
+                status: 'error',
+                message: file_name,
+            });
+        }
+
+        // Conseguir el nombre y la extensión del archivo
+        var file_path = req.files.file0.path;
+        var file_split = file_path.split('\\');
+
+        // ** Cuidado ** En linux o mac
+        // var file_split = file_path.split('/');
+
+        // Nombre del archivo
+        var file_name = file_split[2];
+
+        // Extension del archivo
+        var ext_split = file_name.split('\.');
+        var file_ext = ext_split[1];
+
+        // Comprobar extensión (solo imagenes), si no es valida borrar archivo
+        if (file_ext != 'png' && file_ext != 'jpg' && file_ext != 'jpeg' && file_ext != 'gif') {
+            fs.unlink(file_path, (err) => {
+                return res.status(200).send({
+                    status: 'error',
+                    message: 'La extensión del archivo no es valida.'
+                });
+            })
+        } else {
+            // Sacar id del usuario identificado
+            var userId = req.user.sub;
+
+            // Buscar y actualizar documento de la base de datos
+            User.findOneAndUpdate({
+                _id: userId
+            }, {
+                image: file_name
+            }, {
+                new: true
+            }, (err, userUpdate) => {
+                if (err || !userUpdate) {
+                    return res.status(500).send({
+                        status: 'error',
+                        message: 'Error al guardar el usuario.',
+                        file: file_ext
+                    });
+                }
+                // Devolver respuesta
+                return res.status(200).send({
+                    status: 'success',
+                    message: 'Imagen guardada.',
+                    user: userUpdate
+                });
+            })
+        }
+    },
+    avatar: function (req, res) {
+        var fileName = req.params.fileName;
+        var pathFile = './uploads/users/' + fileName;
+
+        fs.exists(pathFile, (exists) => {
+            if (exists) {
+                return res.sendFile(path.resolve(pathFile));
+            } else {
+                return res.status(404).send({
+                    status: 'error',
+                    message: 'La imagen no existe.',
+                });
+            }
+        });
     }
 };
 
