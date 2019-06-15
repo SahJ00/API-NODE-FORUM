@@ -182,6 +182,34 @@ var controller = {
                     return res.status(200).send({
                         message: 'El email no puede ser modificado.',
                     });
+                } else {
+                    // Buscar y actualizar documentos
+                    User.findOneAndUpdate({
+                        _id: userId
+                    }, params, {
+                        new: true
+                    }, (err, userUpdate) => {
+                        // Devolver una respuesta
+                        if (err) {
+                            return res.status(500).send({
+                                status: 'error',
+                                message: 'Error al actualizar el usuario.',
+                                user: userUpdate
+                            });
+                        }
+                        if (!userUpdate) {
+                            return res.status(500).send({
+                                status: 'error',
+                                message: 'No se ha actualizado el usuario.',
+                                user: userUpdate
+                            });
+                        }
+                        return res.status(200).send({
+                            status: 'success',
+                            message: 'Se ha actualizado los datos.',
+                            user: userUpdate
+                        });
+                    });
                 }
             });
         } else {
