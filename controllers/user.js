@@ -36,6 +36,11 @@ var controller = {
             user.password;
             user.role = 'ROLE_USER';
             user.image = null;
+            user.github = null,
+            user.linkedin = null,
+            user.twitter = null,
+            user.facebook = null
+
 
             // Comprobar si el usuario existe
             User.findOne({

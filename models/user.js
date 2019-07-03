@@ -9,7 +9,11 @@ var UserSchema = Schema({
     email: String,
     password: String,
     image: String,
-    role: String
+    role: String,
+    github: String,
+    linkedin: String,
+    twitter: String,
+    facebook: String
 });
 
 UserSchema.methods.toJSON = function () {
