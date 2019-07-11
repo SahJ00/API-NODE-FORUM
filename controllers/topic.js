@@ -27,7 +27,7 @@ var controller = {
             topic.title = params.title;
             topic.content = params.content;
             topic.code = params.code;
-            topic.lang = params.lang;
+            topic.lang = params.lang.toLowerCase();
             topic.user = req.user.sub;
 
             // Guardar el topic

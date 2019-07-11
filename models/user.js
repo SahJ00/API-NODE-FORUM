@@ -13,7 +13,8 @@ var UserSchema = Schema({
     github: String,
     linkedin: String,
     twitter: String,
-    facebook: String
+    facebook: String,
+    post: Number
 });
 
 UserSchema.methods.toJSON = function () {

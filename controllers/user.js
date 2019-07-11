@@ -39,7 +39,8 @@ var controller = {
             user.github = null,
             user.linkedin = null,
             user.twitter = null,
-            user.facebook = null
+            user.facebook = null,
+            user.post = 0
 
 
             // Comprobar si el usuario existe
