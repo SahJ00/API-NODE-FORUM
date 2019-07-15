@@ -50,12 +50,30 @@ var controller = {
                                 message: "Error al guardar el comentario."
                             })
                         }
-                        // Devolver una respuesta
-                        return res.status(200).send({
-                            status: 'success',
-                            message: "Se ha guardado el comentario.",
-                            topic
+
+
+
+                        Topic.findById(topic._id).populate('user').populate('comments.user').exec((err, topic) => {
+                            if (err) {
+                                return res.status(500).send({
+                                    status: 'error',
+                                    message: 'Error en la petición.'
+                                });
+                            }
+                            if (!topic) {
+                                return res.status(404).send({
+                                    status: 'error',
+                                    message: 'No existe el tema.'
+                                });
+                            }
+                            // Devolver respuesta
+                            return res.status(200).send({
+                                status: 'success',
+                                message: 'Listando los topic.',
+                                topic
+                            });
                         });
+
                     });
                 } else {
                     return res.status(200).send({
@@ -150,11 +168,25 @@ var controller = {
                             message: "No existe el comentario."
                         });
                     }
-                    // Devolver datos
-                    return res.status(200).send({
-                        status: 'succes',
-                        message: "El comentario se elimino correctamente",
-                        topic
+                    Topic.findById(topic._id).populate('user').populate('comments.user').exec((err, topic) => {
+                        if (err) {
+                            return res.status(500).send({
+                                status: 'error',
+                                message: 'Error en la petición.'
+                            });
+                        }
+                        if (!topic) {
+                            return res.status(404).send({
+                                status: 'error',
+                                message: 'No existe el tema.'
+                            });
+                        }
+                        // Devolver respuesta
+                        return res.status(200).send({
+                            status: 'success',
+                            message: 'Listando los topic.',
+                            topic
+                        });
                     });
                 });
             } else {
